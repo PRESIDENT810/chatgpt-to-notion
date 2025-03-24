@@ -165,6 +165,34 @@ const hello = "hello";
       expect(actual).toStrictEqual(expected);
     });
 
+    it('should deal with tables even the cells and the table width do not match', () => {
+      const text = `
+| First Header                             | Second header | Third Header |
+|----------------------------------|----------|--------------|
+| Content Cell                | Content Cell | 
+      `;
+      const actual = markdownToBlocks(text);
+      const expected = [
+        notion.table(
+          [
+            notion.tableRow([
+              [notion.richText('First Header')],
+              [notion.richText('Second header')],
+              [notion.richText('Third Header')],
+            ]),
+            notion.tableRow([
+              [notion.richText('Content Cell')],
+              [notion.richText('Content Cell')],
+              [notion.richText('')],
+            ]),
+          ],
+          3
+        ),
+      ];
+
+      expect(actual).toStrictEqual(expected);
+    });
+
     it('should convert markdown to blocks - deal with images - strict mode', () => {
       const text = fs.readFileSync('test/fixtures/images.md').toString();
       const actual = markdownToBlocks(text, {strictImageUrls: true});
